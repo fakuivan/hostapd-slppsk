@@ -1,0 +1,47 @@
+#!/usr/bin/busybox ash
+# shellcheck shell=dash
+set -euo pipefail
+
+echoerr() { echo "$@" 1>&2; }
+
+if [ $# -lt 2 ]; then
+    echoerr "Interface and command name must be given"
+    exit 1
+fi
+
+WIFI_IFACE="$1"
+shift
+COMMAND="$1"
+shift
+
+LIB_DIR="$(dirname "$0")/../lib/hostapd_slppsk"
+
+# shellcheck source=../lib/hostapd_slppsk/manage_common.sh
+. "$LIB_DIR/manage_common.sh"
+# shellcheck source=../lib/hostapd_slppsk/iface_common.sh
+. "$LIB_DIR/iface_common.sh"
+
+init_iface () {
+    if [ -e "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")"; then
+        echoerr "Instance running with PID $(cat "$PID_FILE")"
+        return 0;
+    fi
+    rm -rf "$IFACE_CONFIG"
+    mkdir -p "$IFACE_CONFIG"
+    flock "$LOCK_FILE" "$LIB_DIR"/init_iface.sh "$WIFI_IFACE" "$@"
+}
+
+case "$COMMAND" in
+    "init")
+        init_iface "$@"
+        exit
+        ;;
+    "init-ppsk")
+        flock "$LOCK_FILE" "$SCRIPT_DIR"/init_psk.sh "$@"
+        exit
+        ;;
+    *)
+        echoerr "Invalid command $COMMAND"
+        exit 1
+        ;;
+esac
