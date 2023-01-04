@@ -37,6 +37,17 @@ get_psk_id () {
         head -c12
 }
 
+check_mac_addr () {
+    local addr="$1"
+    # shellcheck disable=SC3010
+    if ! printf "%s" "$addr" | grep -qE \
+            '^\s*([0-9A-Fa-f]{2}:){5}([0-9A-Fa-f]{2})\s*$'; then
+        echoerr "invalid MAC address: '$addr'"
+        return 1
+    fi
+    printf "%s" "$addr" | tr -dc 'a-fA-F0-9:'
+}
+
 MIN_PSK_LEN=12
 MIN_PPSK_BYTE_LEN=8
 
@@ -76,6 +87,9 @@ params_file \
 touch "$PERM_PPSKS_FILE" "$TEMP_PPSKS_FILE"
 
 while read -r STA_ADDRESS; do
+    if ! STA_ADDRESS="$(check_mac_addr "$STA_ADDRESS")"; then
+        continue
+    fi
     get_entry >> "$PERM_PPSKS_FILE"
 done < "$PERM_MACS_FILE"
 

@@ -36,8 +36,7 @@ This project is inspired by
 [this answer](https://security.stackexchange.com/a/266499/193181)
 in Stack Exchange Information Security.
 
-TODO
-* Skip invalid MAC addresses and blank lines from permanent MACs file
+## TODO
 * Add uci config
 * Add service
 * Fix inconsistent naming in code around "master password"
