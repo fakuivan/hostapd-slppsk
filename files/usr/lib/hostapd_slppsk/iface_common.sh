@@ -15,9 +15,9 @@ IFACE_CONFIG="${IFACE_CONFIG:-$(dirname "$SCRIPT_DIR")}"
 log () {
     local level="$1"
     shift
-    if [ info = "$level" ]; then
+    #if [ info = "$level" ]; then
         echo "$level:" "$@"
-    fi
+    #fi
 }
 
 for_each_ppsk () {
