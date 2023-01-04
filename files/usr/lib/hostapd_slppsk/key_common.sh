@@ -1,4 +1,4 @@
-#!/usr/bin/busybox ash
+#!/usr/bin/env ash
 # shellcheck shell=dash
 
 # shellcheck disable=SC2154
