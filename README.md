@@ -3,17 +3,18 @@
 This set of scripts makes use of the `wpa_psk_file` configuration
 in hostapd to assign each station (wifi client device) a pre-shared
 key derived from a Master Password and the station MAC address. The
-code used to derive the PPSK is equivalent to this shell function:
+code used to derive the PPSK is equivalent to this bash function:
 
-```sh
+```bash
 get_ppsk () {
+    local master_pwd="$1" sta_addr="$2" ppsk_len_bytes="$3"
     printf "%s%s" \
-            "$MASTER_PSK" \
-            "$(echo "$STA_ADDRESS" | tr -d :)" | \
+            "$master_pwd" \
+            "$(echo "$sta_addr" | tr -d : | xxd -r -p)" | \
         sha256sum | \
         cut -d" " -f 1 | \
         xxd -r -p | \
-        head -c "$PPSK_BYTE_LEN" | \
+        head -c "$ppsk_len_bytes" | \
         base64
 }
 ```
