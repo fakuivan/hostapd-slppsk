@@ -61,7 +61,7 @@ get_entry () {
 get_ppsk () {
     printf "%s%s" \
             "$MASTER_PSK" \
-            "$(echo "$STA_ADDRESS" | tr -d :)" | \
+            "$(echo "$STA_ADDRESS" | tr -d : | xxd -r -p)" | \
         sha256sum | \
         cut -d" " -f 1 | \
         /usr/bin/xxd -r -p | \
