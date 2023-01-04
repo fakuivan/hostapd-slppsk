@@ -10,7 +10,7 @@ get_ppsk () {
     local master_pwd="$1" sta_addr="$2" ppsk_len_bytes="$3"
     printf "%s%s" \
             "$master_pwd" \
-            "$(echo "$sta_addr" | tr -d : | xxd -r -p)" | \
+            "$(echo "$sta_addr" | tr -dc a-fA-F0-9 | xxd -r -p)" | \
         sha256sum | \
         cut -d" " -f 1 | \
         xxd -r -p | \
@@ -30,9 +30,10 @@ any issues with the implementation.
 The advantage of using keys derived from a Master Password is the
 minimal configuration, no databases to maintain, no sync issues, and
 the whole thing is pretty lightweight compared to using a RADIUS server
-like freeradius.
+like freeradius. Roaming between multiple APs should also not be an
+issue as long as both APs share the same Master Password.
 
-This project is inspired by 
+This project is inspired by
 [this answer](https://security.stackexchange.com/a/266499/193181)
 in Stack Exchange Information Security.
 
