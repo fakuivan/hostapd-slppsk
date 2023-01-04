@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=slppsk-hostapd
 PKG_VERSION:=0.1
-PKG_RELEASE:=1
+PKG_RELEASE:=$(shell git rev-parse --short HEAD)
 PKG_BUILD_DIR:=$(BUILD_DIR)/slppsk_hostapd
 
 include $(INCLUDE_DIR)/package.mk
