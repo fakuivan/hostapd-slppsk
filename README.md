@@ -38,6 +38,7 @@ This project is inspired by
 in Stack Exchange Information Security.
 
 ## TODO
+* Perm MAC files can only be modified by the event listener on a single interface, otherwise things get out of sync
 * Fix inconsistent naming in code around "master password"
 * Fix inconsistent naming of project: "hostapd_slppsk" vs "slppsk-hostapd"
 
