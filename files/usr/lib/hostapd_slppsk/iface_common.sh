@@ -48,7 +48,7 @@ hostapd_cli_i () {
 }
 
 hostapd_reload () {
-    hostapd_cli_i reload_wpa_psk
+    hostapd_cli_i reload_wpa_psk > /dev/null
 }
 
 hostapd_listen () {
