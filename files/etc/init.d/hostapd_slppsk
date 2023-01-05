@@ -12,9 +12,9 @@ config_iface () {
         "/var/run/hostapd-$ifname.psk"
 
     if ! [ -r "$macs_file" ]; then
-        hostapd_slppsk init "$ifname" "$wpa_psk_file"
+        hostapd_slppsk "$ifname" init "$wpa_psk_file"
     else
-        hostapd_slppsk init "$ifname" "$wpa_psk_file" "$macs_file"
+        hostapd_slppsk "$ifname" init "$wpa_psk_file" "$macs_file"
     fi
 }
 
@@ -36,7 +36,7 @@ config_password () {
     fi
 
     MASTER_PSK="$master_pwd" hostapd_slppsk \
-        "$ifname" init-psk \
+        "$ifname" init-ppsk \
         "$temp_entries" \
         "$params" \
         "$ppsk_len"
