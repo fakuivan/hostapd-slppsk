@@ -2,6 +2,8 @@
 # shellcheck shell=dash
 
 USE_PROCD=1
+START=20
+STOP=20
 
 config_iface () {
     local iface="$1"
