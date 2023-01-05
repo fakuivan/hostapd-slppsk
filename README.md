@@ -42,3 +42,9 @@ in Stack Exchange Information Security.
 * Add service
 * Fix inconsistent naming in code around "master password"
 * Fix inconsistent naming of project: "hostapd_slppsk" vs "slppsk-hostapd"
+
+## Useful links
+* https://forum.openwrt.org/t/how-to-add-a-shell-script-as-a-package-in-menuconfig/95766
+* https://github.com/michael-dev/hostapd/blob/f91680c15f80f0b617a0d2c369c8c1bb3dcf078b/src/ap/ap_config.c#L360-L364
+* https://openwrt.org/docs/guide-developer/helloworld/chapter3
+
