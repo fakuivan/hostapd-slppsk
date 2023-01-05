@@ -23,6 +23,7 @@ log () {
 for_each_ppsk () {
     local ppsk_dir key_id
     for ppsk_dir in "$PPSKS_DIR"/*; do
+        if ! [ -e "$ppsk_dir" ]; then continue; fi
         key_id="$(basename "$ppsk_dir")"
         (. "$SCRIPT_DIR/key_common.sh"; "$@" "$key_id")
     done
