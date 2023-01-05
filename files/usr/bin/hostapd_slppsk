@@ -59,6 +59,9 @@ case "$COMMAND" in
         flock "$LOCK_FILE" "$SCRIPT_DIR"/init_psk.sh "$@"
         ;;
     "listen")
+        hostapd_cli () {
+            exec hostapd_cli "$@"
+        }
         hostapd_listen "$@"
         ;;
     "pid-file")
