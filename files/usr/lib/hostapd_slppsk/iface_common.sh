@@ -42,10 +42,17 @@ add_ppsks () {
     } >> "$PPSKS_FILE"
 }
 
-hostapd_reload () {
+hostapd_cli_i () {
     hostapd_cli \
-        -i "$(basename "$IFACE_CONFIG")" \
-        reload_wpa_psk
+        -i "$(basename "$IFACE_CONFIG")" "$@"
+}
+
+hostapd_reload () {
+    hostapd_cli_i reload_wpa_psk
+}
+
+hostapd_listen () {
+    hostapd_cli_i -r -a "$SCRIPT_DIR"/event_handler.sh "$@"
 }
 
 update_ppsks () {

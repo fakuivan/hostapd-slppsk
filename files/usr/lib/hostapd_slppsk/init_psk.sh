@@ -74,11 +74,13 @@ if [ "$MIN_PPSK_BYTE_LEN" -gt "$PPSK_BYTE_LEN" ]; then
 fi
 
 key_id="$(get_psk_id "$MASTER_PSK")"
+# Don't import params file since it hasn't been created yet
 IGNORE_PARAMS=true
 . "$SCRIPT_DIR"/key_common.sh
 unset IGNORE_PARAMS
 
 mkdir "$KEY_CONFIG_DIR"
+# Create the params file and add the following vars
 params_file \
     MASTER_PSK \
     MAX_TEMP_ENTRIES \
@@ -86,6 +88,8 @@ params_file \
     PPSK_BYTE_LEN > "$PARAMS_FILE"
 touch "$PERM_PPSKS_FILE" "$TEMP_PPSKS_FILE"
 
+# "Manually" add the entries to the ppsks file to avoid
+# rewriting each time a password is initialized
 while read -r STA_ADDRESS; do
     if ! STA_ADDRESS="$(check_mac_addr "$STA_ADDRESS")"; then
         continue

@@ -5,6 +5,7 @@ set -euo pipefail
 LIB_DIR="$(dirname "$0")"
 
 WIFI_IFACE="$1"
+PPSKS_SOURCE_FILE="$2"
 
 # shellcheck source=./manage_common.sh
 . "$LIB_DIR/manage_common.sh"
@@ -16,8 +17,6 @@ file_resolve () {
     printf "%s" "$(path_resolve "$dir")/$file"
 }
 
-PERM_MACS_SOURCE_FILE="$(file_resolve "$2")"
-
 # shellcheck source=./iface_common.sh
 . "$LIB_DIR/iface_common.sh"
 
@@ -26,6 +25,13 @@ PERM_MACS_SOURCE_FILE="$(file_resolve "$2")"
 ln -s "$(path_resolve "$LIB_DIR")" "$SCRIPT_DIR"
 
 mkdir "$PPSKS_DIR"
-touch "$PPSKS_FILE"
+ln -s "$PPSKS_SOURCE_FILE" "$PPSKS_FILE"
+printf "%s" "" > "$PPSKS_FILE"
 
-ln -s "$PERM_MACS_SOURCE_FILE" "$PERM_MACS_FILE"
+if [ $# -gt 2 ]; then
+    PERM_MACS_SOURCE_FILE="$(file_resolve "$3")"
+    ln -s "$PERM_MACS_SOURCE_FILE" "$PERM_MACS_FILE"
+else
+    touch "$PERM_MACS_FILE"
+fi
+

@@ -38,8 +38,6 @@ This project is inspired by
 in Stack Exchange Information Security.
 
 ## TODO
-* Add uci config
-* Add service
 * Fix inconsistent naming in code around "master password"
 * Fix inconsistent naming of project: "hostapd_slppsk" vs "slppsk-hostapd"
 

@@ -4,6 +4,8 @@ set -euo pipefail
 
 echoerr() { echo "$@" 1>&2; }
 
+LIB_DIR="$(dirname "$0")/../lib/hostapd_slppsk"
+
 if [ $# -lt 2 ]; then
     echoerr "Interface and command name must be given"
     exit 1
@@ -14,31 +16,54 @@ shift
 COMMAND="$1"
 shift
 
-LIB_DIR="$(dirname "$0")/../lib/hostapd_slppsk"
-
 # shellcheck source=../lib/hostapd_slppsk/manage_common.sh
 . "$LIB_DIR/manage_common.sh"
 # shellcheck source=../lib/hostapd_slppsk/iface_common.sh
 . "$LIB_DIR/iface_common.sh"
 
+instance_running () {
+    if ! [ -e "$PID_FILE" ]; then
+        return 1
+    fi
+    cat "$PID_FILE"
+    kill -0 "$pid"
+}
+
 init_iface () {
-    if [ -e "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")"; then
-        echoerr "Instance running with PID $(cat "$PID_FILE")"
-        return 0;
+    local pid
+    if pid="$(instance_running)"; then
+        echoerr "Instance running with PID $pid"
+        return 1;
     fi
     rm -rf "$IFACE_CONFIG"
     mkdir -p "$IFACE_CONFIG"
     flock "$LOCK_FILE" "$LIB_DIR"/init_iface.sh "$WIFI_IFACE" "$@"
 }
 
+remove_iface () {
+    local pid
+    if pid="$(instance_running)"; then
+        echoerr "Instance running with PID $pid"
+        return 1;
+    fi
+    rm -rf "$IFACE_CONFIG"
+}
+
 case "$COMMAND" in
     "init")
         init_iface "$@"
-        exit
         ;;
     "init-ppsk")
         flock "$LOCK_FILE" "$SCRIPT_DIR"/init_psk.sh "$@"
-        exit
+        ;;
+    "listen")
+        hostapd_listen "$@"
+        ;;
+    "pid-file")
+        printf "%s" "$PID_FILE"
+        ;;
+    "remove")
+        remove_iface "$@"
         ;;
     *)
         echoerr "Invalid command $COMMAND"

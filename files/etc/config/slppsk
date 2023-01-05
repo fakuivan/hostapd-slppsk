@@ -1,0 +1,37 @@
+# Uncommented options are required
+
+config password
+    # Name of the wifi interface controlled by hostapd
+    option ifname wlan0
+
+    # Master password used to derive the pre shared
+    # keys for each station
+    option master_password changeme123
+
+    # Max number of temp entries for this password
+    #option max_temp_entries 20
+
+    # VLAN ID assigned to stations connecting with PSKs from
+    # this password, zero means no vlan
+    #option vlanid 0
+
+    # PSKs are trimmed to this length in bytes before being encoded
+    # to base64, use multiples of 3 to avoid padding (==)
+    #option ppsk_len_bytes 12
+
+    #option wps 0
+
+config iface
+    option ifname wlan0
+
+    # Location of the psk file, default is in 
+    # "/var/run/hostapd-$ifname.psk"
+    #option wpa_psk_file
+
+    # Save the MAC addresses that have been successfully
+    # authenticated to this interface using any of its
+    # PSKs derived from passwords to this file.
+    # Stations saved here will be automatically added every
+    # time the service restarts, or across reboots if
+    # this points to a non volatile location of the filesystem
+    #option macs_file

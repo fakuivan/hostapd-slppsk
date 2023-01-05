@@ -32,14 +32,18 @@ define Build/Compile
 endef
 
 define Package/slppsk-hostapd/install
-	$(INSTALL_DIR) $(1)/usr/bin $(1)/usr/lib/hostapd_slppsk
+	$(INSTALL_DIR) \
+		$(1)/usr/{bin,lib/hostapd_slppsk} \
+		$(1)/etc/{config,init.d}
 	$(INSTALL_BIN) ./files/usr/bin/hostapd_slppsk $(1)/usr/bin
+	$(INSTALL_BIN) ./files/etc/init.d/hostapd_slppsk $(1)/etc/init.d
 	$(INSTALL_BIN) \
 		./files/usr/lib/hostapd_slppsk/{add_permanent_ppsk,add_temp_ppsk,event_handler,init_iface,init_psk}.sh \
 		$(1)/usr/lib/hostapd_slppsk
 	$(INSTALL_DATA) \
 		./files/usr/lib/hostapd_slppsk/{key_common,iface_common,manage_common}.sh \
 		$(1)/usr/lib/hostapd_slppsk
+	$(INSTALL_CONF) ./files/etc/config/slppsk $(1)/etc/config
 endef
  
 $(eval $(call BuildPackage,slppsk-hostapd))
