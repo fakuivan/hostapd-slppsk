@@ -63,15 +63,15 @@ start_service () {
     config_foreach start_instance iface
 }
 
-stop_instance () {
+instance_stopped () {
     local iface="$1"
     config_get ifname "$iface" ifname
     hostapd_slppsk "$ifname" remove
 }
 
-stop_service () {
+service_stopped () {
     config_load slppsk
-    config_foreach stop_instance iface
+    config_foreach instance_stopped iface
 }
 
 service_triggers() {
