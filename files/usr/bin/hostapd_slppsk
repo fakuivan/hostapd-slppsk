@@ -22,10 +22,12 @@ shift
 . "$LIB_DIR/iface_common.sh"
 
 instance_running () {
+    local pid
     if ! [ -e "$PID_FILE" ]; then
         return 1
     fi
-    cat "$PID_FILE"
+    pid="$(cat "$PID_FILE")"
+    printf "%s" "$pid"
     kill -0 "$pid"
 }
 
