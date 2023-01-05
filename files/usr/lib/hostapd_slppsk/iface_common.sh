@@ -73,7 +73,7 @@ get_ppsk () {
                 xxd -r -p)" | \
         sha256sum | \
         cut -d" " -f 1 | \
-        /usr/bin/xxd -r -p | \
+        xxd -r -p | \
         head -c "$PPSK_BYTE_LEN" | \
         base64
 }
