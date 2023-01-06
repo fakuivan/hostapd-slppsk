@@ -45,5 +45,9 @@ define Package/slppsk-hostapd/install
 		$(1)/usr/lib/hostapd_slppsk
 	$(INSTALL_CONF) ./files/etc/config/slppsk $(1)/etc/config
 endef
+
+define Package/ddns-scripts/conffiles
+/etc/config/ddns
+endef
  
 $(eval $(call BuildPackage,slppsk-hostapd))
