@@ -5,13 +5,61 @@ USE_PROCD=1
 START=20
 STOP=20
 
+# Taken from https://github.com/python/cpython/blob/f4fcfdf8c593611f98b9358cc0c5604c15306465/Lib/shlex.py#L321-L332
+quote () {
+    printf "'"
+    # replaces ' with '"'"'
+    sed "s/'/'"'"'"'"'"'"'/g"
+    printf "'"
+}
+
+quote_elem () {
+    printf "%s" "$1" | quote; printf " "
+}
+
+config_list_quoted () {
+    config_list_foreach "$1" "$2" quote_elem
+}
+
+first_in () {
+    local arg ref="$1"
+    shift
+    for arg in "$@"; do
+        [ "$ref" = "$arg" ] && return 0
+    done
+    return 1
+}
+
+on_unique_args () {
+    # Calls func on every unique argument
+    local arg func="$1";
+    shift
+    for arg in "$@"; do
+        shift;
+        first_in "$arg" "$@" || "$func" "$arg"
+    done
+}
+
 config_iface () {
     local iface="$1"
+    shift
     local macs_file wpa_psk_file ifname
     config_get ifname "$iface" ifname
+    if ! first_in "$ifname" "$@"; then
+        # Interface configured but no password uses it
+        return;
+    fi
     config_get macs_file "$iface" macs_file
-    config_get wpa_psk_file "$iface" wpa_psk_file \
-        "/var/run/hostapd-$ifname.psk"
+    config_get wpa_psk_file "$iface" wpa_psk_file ""
+
+    config_iface_defaults "$ifname" "$wpa_psk_file" "$macs_file"
+}
+
+config_iface_defaults () {
+    local ifname="$1" wpa_psk_file="$2" macs_file="$3"
+    if [ -z "$wpa_psk_file" ]; then
+        wpa_psk_file="/var/run/hostapd-$ifname.psk"
+    fi
 
     if ! [ -r "$macs_file" ]; then
         hostapd_slppsk "$ifname" init "$wpa_psk_file"
@@ -22,8 +70,8 @@ config_iface () {
 
 config_password () {
     local password="$1"
-    local ifname master_pwd temp_entries vlanid ppsk_len wps params
-    config_get ifname "$password" ifname
+    shift
+    local master_pwd temp_entries vlanid ppsk_len wps params
     config_get master_pwd "$password" master_password
     config_get temp_entries "$password" max_temp_entries 20
     config_get vlanid "$password" vlanid 0
@@ -37,16 +85,30 @@ config_password () {
         params="$params vlanid=$vlanid"
     fi
 
-    MASTER_PSK="$master_pwd" hostapd_slppsk \
-        "$ifname" init-ppsk \
-        "$temp_entries" \
-        "$params" \
-        "$ppsk_len"
+    # It's tempting to init for one interface and then symlink
+    # that password directory to the rest of the interfaces,
+    # but that will mess with the sync as one lock file is held
+    # for one interface, thus simultaneous writes could occur
+    # when an event is fired for each interface
+
+    eval "set -- $(config_list_quoted "$password" ifname)"
+    for ifname in "$@"; do
+        MASTER_PSK="$master_pwd" hostapd_slppsk \
+            "$ifname" init-ppsk \
+            "$temp_entries" \
+            "$params" \
+            "$ppsk_len"
+    done
+}
+
+# shellcheck disable=SC2120
+get_implicit_ifaces () {
+    eval "set -- $(config_foreach config_list_quoted password)"
+    on_unique_args quote_elem "$@"
 }
 
 start_instance () {
-    local iface="$1" ifname pid_file
-    config_get ifname "$iface" ifname
+    local ifname="$1" pid_file
     pid_file="$(hostapd_slppsk "$ifname" pid-file)"
 
     procd_open_instance "$ifname"
@@ -59,21 +121,28 @@ start_instance () {
 }
 
 start_service () {
+    local impl_iface
+    eval "set -- $(get_implicit_ifaces)"
     config_load slppsk
-    config_foreach config_iface iface
-    config_foreach config_password password
-    config_foreach start_instance iface
-}
 
-instance_stopped () {
-    local iface="$1"
-    config_get ifname "$iface" ifname
-    hostapd_slppsk "$ifname" remove
+    for impl_iface in "$@"; do
+        config_iface_defaults "$impl_iface" "" ""
+    done
+    # Explicitly configured ifaces will overwrite the implicit ones
+    config_foreach config_iface iface "$@"
+    config_foreach config_password password
+    for impl_iface in "$@"; do
+        start_instance "$impl_iface"
+    done
 }
 
 service_stopped () {
     config_load slppsk
-    config_foreach instance_stopped iface
+    eval "set -- $(get_implicit_ifaces)"
+    # TODO: Delete interfaces based on service instances
+    for ifname in "$@"; do
+        hostapd_slppsk "$ifname" remove
+    done
 }
 
 service_triggers() {

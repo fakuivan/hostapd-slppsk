@@ -2,7 +2,8 @@
 
 config password
     # Name of the wifi interface controlled by hostapd
-    option ifname wlan0
+    list ifname wlan0
+    list ifname wlan1
 
     # Master password used to derive the pre shared
     # keys for each station
@@ -21,8 +22,8 @@ config password
 
     #option wps 0
 
-config iface
-    option ifname wlan0
+#config iface
+#    option ifname wlan0
 
     # Location of the psk file, default is in 
     # "/var/run/hostapd-$ifname.psk"
