@@ -103,7 +103,7 @@ config_password () {
 
 # shellcheck disable=SC2120
 get_implicit_ifaces () {
-    eval "set -- $(config_foreach config_list_quoted password)"
+    eval "set -- $(config_foreach config_list_quoted password ifname)"
     on_unique_args quote_elem "$@"
 }
 
@@ -122,8 +122,8 @@ start_instance () {
 
 start_service () {
     local impl_iface
-    eval "set -- $(get_implicit_ifaces)"
     config_load slppsk
+    eval "set -- $(get_implicit_ifaces)"
 
     for impl_iface in "$@"; do
         config_iface_defaults "$impl_iface" "" ""
