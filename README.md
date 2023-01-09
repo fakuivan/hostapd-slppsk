@@ -37,6 +37,24 @@ This project is inspired by
 [this answer](https://security.stackexchange.com/a/266499/193181)
 in Stack Exchange Information Security.
 
+## Typical config
+
+```conf
+config password
+    # 2.5GHz network connected to lan interface
+    list ifname wlan-lan
+    # same but 5GHz
+    list ifname wlan-lan-fghz
+
+    # Master password used to derive the pre shared
+    # keys for each station
+    option master_password testing12345
+```
+
+Nothing more than that should be needed to have a functional PPSK
+setup. For more details read the comments in the
+[config file](./files/etc/config/slppsk)
+
 ## TODO
 * Perm MAC files can only be modified by the event listener on a single interface, otherwise things get out of sync
 * Fix inconsistent naming in code around "master password"
@@ -46,4 +64,4 @@ in Stack Exchange Information Security.
 * https://forum.openwrt.org/t/how-to-add-a-shell-script-as-a-package-in-menuconfig/95766
 * https://github.com/michael-dev/hostapd/blob/f91680c15f80f0b617a0d2c369c8c1bb3dcf078b/src/ap/ap_config.c#L360-L364
 * https://openwrt.org/docs/guide-developer/helloworld/chapter3
-
+* https://android.googlesource.com/platform/external/wpa_supplicant_8/+/refs/heads/master/hostapd/hostapd.wpa_psk
