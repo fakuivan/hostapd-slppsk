@@ -124,6 +124,21 @@ the interface name might excede that limit.
 * Fix inconsistent naming in code around "master password"
 * Fix inconsistent naming of project: "hostapd_slppsk" vs "slppsk-hostapd"
 
+## Known issues
+
+### `hostapd: CTRL_IFACE monitor[1]: 146 - Connection refused`
+
+There seems to be an issue with how `hostapd_cli` closes as hostapd
+keeps sending events to dead processes, for now it's a matter of
+not restarting the service too many times :P
+
+https://www.spinics.net/lists/hostap/msg09087.html
+
+However I think that this doesn't happen when running hostapd_cli as a
+daemon with the `-B` option. I might investigate adapting the scripts
+to run `hostapd_cli` as a daemon and bringing it to the foreground
+as a workaround.
+
 ## Useful links
 
 * https://forum.openwrt.org/t/how-to-add-a-shell-script-as-a-package-in-menuconfig/95766
