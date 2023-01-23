@@ -77,6 +77,25 @@ for this project is home networking (many switch chips for OpenWRT
 compatible routers don't support more than 15 VLANs), I'll
 explain the static method.
 
+For this example, we have three VLANs that we want to connect
+to a main WiFi AP with interface name `wifi-main`.
+
+`/etc/config/slppsk`:
+
+```conf
+config password 'main_iot'
+        list ifname 'wlan-main'
+        option vlanid '10'
+
+config password 'main_guests'
+        list ifname 'wlan-main'
+        option vlanid '4'
+
+config password 'main_lan'
+        list ifname 'wlan-main'
+        option vlanid '2'
+```
+
 The wifi interface config should look like this:
 
 ```conf
