@@ -153,7 +153,7 @@ There seems to be an issue with how `hostapd_cli` closes as hostapd
 keeps sending events to dead processes, for now it's a matter of
 not restarting the service too many times :P
 
-https://www.spinics.net/lists/hostap/msg09087.html
+[hostapd_cli not handling termination with action file](https://www.spinics.net/lists/hostap/msg09087.html).
 
 However I think that this doesn't happen when running hostapd_cli as a
 daemon with the `-B` option. I might investigate adapting the scripts
@@ -169,17 +169,17 @@ since this is a script only package, any relatively recent SDK
 version and any architecture can be used to build the package. `podman`
 or `docker` is required.
 
-To build the package simply call the `build.sh` script like so
+To build the package simply call the `build.sh` script like so:
 
 ```sh
 ./build.sh ./build/
 ```
 
-The resulting package will be copied to the `./build/` directory
+The resulting package will be copied to the `./build/` directory.
 
 ## Useful links
 
-* https://forum.openwrt.org/t/how-to-add-a-shell-script-as-a-package-in-menuconfig/95766
-* https://github.com/michael-dev/hostapd/blob/f91680c15f80f0b617a0d2c369c8c1bb3dcf078b/src/ap/ap_config.c#L360-L364
-* https://openwrt.org/docs/guide-developer/helloworld/chapter3
-* https://android.googlesource.com/platform/external/wpa_supplicant_8/+/refs/heads/master/hostapd/hostapd.wpa_psk
+* [Example script only package](https://forum.openwrt.org/t/how-to-add-a-shell-script-as-a-package-in-menuconfig/95766)
+* [How hostapd parses key parameters](https://github.com/michael-dev/hostapd/blob/f91680c15f80f0b617a0d2c369c8c1bb3dcf078b/src/ap/ap_config.c#L360-L364)
+* [OpenWRT development guide: Creating a package from your application](https://openwrt.org/docs/guide-developer/helloworld/chapter3)
+* [Example `wpa_psk_file`](https://android.googlesource.com/platform/external/wpa_supplicant_8/+/refs/heads/master/hostapd/hostapd.wpa_psk)
