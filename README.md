@@ -120,6 +120,8 @@ the interface name might excede that limit.
 
 ## TODO
 
+* Add tests
+* Automatic releases with github actions
 * Perm MAC files can only be modified by the event listener on a single interface, otherwise things get out of sync
 * Fix inconsistent naming in code around "master password"
 * Fix inconsistent naming of project: "hostapd_slppsk" vs "slppsk-hostapd"
@@ -138,6 +140,23 @@ However I think that this doesn't happen when running hostapd_cli as a
 daemon with the `-B` option. I might investigate adapting the scripts
 to run `hostapd_cli` as a daemon and bringing it to the foreground
 as a workaround.
+
+## Building
+
+This project gets compiled into an OpenWRT package file, the easiest
+way to do this is to use the SDK images provided by the OpenWRT team.
+These images are tagged based on target architecture and version, but
+since this is a script only package, any relatively recent SDK
+version and any architecture can be used to build the package. `podman`
+or `docker` is required.
+
+To build the package simply call the `build.sh` script like so
+
+```sh
+./build.sh ./build/
+```
+
+The resulting package will be copied to the `./build/` directory
 
 ## Useful links
 
