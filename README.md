@@ -160,6 +160,25 @@ daemon with the `-B` option. I might investigate adapting the scripts
 to run `hostapd_cli` as a daemon and bringing it to the foreground
 as a workaround.
 
+### hostapd clears the default psk file on service start
+
+This is not a problem if all services start normally, but if you
+restart wpad manually, it will clear the psk file, breaking the slppsk
+daemon silently, until an entry gets added to the psk file. To fix
+this you can specify the location of the psk file, even if it just
+points to the default location, for example:
+
+`/etc/config/wireless`:
+
+```conf
+# ...
+config wifi-iface 'wifinet3'
+    # ...
+    option ifname 'wlan-ifname'
+    # ...
+    option wpa_psk_file '/var/run/hostapd-wlan-ifname.psk'
+```
+
 ## Building
 
 This project gets compiled into an OpenWRT package file, the easiest
