@@ -19,14 +19,14 @@ fi
 
 BIN_DIR="$1"
 # These shouldn't matter much since we're building a script only package
-SDK_TAG="${2:-"mips_24kc-22.03.3"}"
-SDK_REPO="${3:-"docker.io/openwrtorg/sdk"}"
+SDK_TAG="${2:-"mips_24kc-23.05.0"}"
+SDK_REPO="${3:-"docker.io/openwrt/sdk"}"
 
 build () {
     local temp_dir="$1"
     "$ENGINE" run --rm -u root \
-        -v .:/home/build/openwrt/package/slppsk-hostapd \
-        -v "$temp_dir":/home/build/openwrt/bin/ \
+        -v .:/builder/package/slppsk-hostapd \
+        -v "$temp_dir":/builder/bin/ \
         -ti "$SDK_REPO":"$SDK_TAG" \
         bash -c 'make defconfig
                  make package/slppsk-hostapd/compile -j$(nproc)'
